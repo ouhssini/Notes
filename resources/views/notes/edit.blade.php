@@ -38,7 +38,7 @@
                 </div>
                 <div class="col text-end">
                     <div class="image-fluid">
-                        <img src="/images/{{ $note->image }}" class="border-1 border border-black" alt="{{ Str::limit($note->note, 50) }}" style="width: 300px">
+                        <img src="{{ asset('storage/' . $note->image) }}" class="border-1 border border-black" alt="{{ Str::limit($note->note, 50) }}" style="width: 300px">
                     </div>
                 </div>
             </div>

@@ -38,4 +38,21 @@ class UserController extends Controller
         Auth::logout();
         return to_route('loginForm');
     }
+
+
+    public function signupForm()
+    {
+        return view("login.signup");
+    }
+    public function signup(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required',
+            'email' => 'required| email| unique:users',
+            'password' => 'required | min:9 | confirmed',
+        ]);
+
+        User::create($data);
+        return to_route('login')->with('success', 'You have registered successfully');
+    }
 }

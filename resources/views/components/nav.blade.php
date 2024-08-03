@@ -14,6 +14,7 @@
                     <a href="{{ route('logout') }}" class="nav-link">Logout</a>
                 @else
                     <a href="{{ route('loginForm') }}" class="nav-link">login</a>
+                    <a href="{{ route('signupForm') }}" class="nav-link">Register</a>
                 @endauth
             </div>
         </div>
