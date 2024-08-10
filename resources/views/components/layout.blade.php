@@ -17,7 +17,7 @@
         </div>
         <div class="main row flex-grow-1">
             <div class="col">
-               <div class="container py-3"> @yield('main')</div>
+                <div class="container py-3"> @yield('main')</div>
             </div>
         </div>
         <div class="row">
@@ -26,7 +26,8 @@
             </div>
         </div>
     </div>
-</html>
+
+    @include('sweetalert::alert')
 </body>
 
 </html>

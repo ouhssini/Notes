@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\NoteRequest;
 use App\Models\Note;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use RealRashid\SweetAlert\Facades\Alert;
+
 
 class NoteController extends Controller
 {
@@ -16,7 +17,7 @@ class NoteController extends Controller
     public function index()
     {
         $notes = Note::query()
-            ->where('user_id', auth()->user()->id)
+            ->where('user_id', Auth::id())
             ->orderBy('id', 'desc')
             ->paginate(9);
         return view("notes.index", compact('notes'));
@@ -28,9 +29,8 @@ class NoteController extends Controller
      */
     public function create()
     {
-        // $users = User::all();
+        
         return view("notes.create");
-        // return view("notes.create", ['users' =>$users]);
     }
 
     /**
@@ -40,14 +40,14 @@ class NoteController extends Controller
     {
         $data = $request->validated();
         if ($image = $request->file('image')) {
-
             $nomimage = $image->store('images', 'public');
         } else {
             $nomimage = 'images/placeholder.jpg';
         }
         $data['image'] = $nomimage;
-        $data['user_id'] = auth()->user()->id;
+        $data['user_id'] = Auth::id();
         Note::create($data);
+        Alert::success('Note CREATING', 'Your note has been created successfully');
         return to_route('note.index')->with('success', 'Your note has been created successfully');
     }
 
@@ -56,10 +56,8 @@ class NoteController extends Controller
      */
     public function show(Note $note)
     {
-        if ($note->user_id !== Auth()->user()->id) {
-            abort(403);
-        }
-        // $note = Note::find($note->id);
+        Gate::authorize('canEdit', $note);
+        confirmDelete("DELETE NOTE", "ARE YOU SURE YOU WANT TO DELETE THIS NOTE?");
         return view('notes.show', compact('note'));
     }
 
@@ -68,38 +66,25 @@ class NoteController extends Controller
      */
     public function edit(Note $note)
     {
-        if ($note->user_id !== Auth()->user()->id) {
-            abort(403);
-        }
-        // $note = Note::find($note->id);
+        Gate::authorize('canEdit', $note);
         return view('notes.edit', compact('note'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Note $note)
+    public function update(NoteRequest $request, Note $note)
     {
-        if ($note->user_id !== Auth()->user()->id) {
-            abort(403);
-        }
-        $data =  $request->validate([
-            'note' => 'required|min:30 | max:2500',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:5120'
-        ]);
 
-        // $nomImage =  $request->file('image')->store('image','public');
+        Gate::authorize('canEdit', $note);
+        $data =  $request->validated();
+
         if ($image = $request->file('image')) {
-            // $destinationPath = 'images/';
-            // $nomimage = Str::random(35) . "." . $image->getClientOriginalExtension();
-            // // Utilisation de Str::random pour générer un nom unique
-            // $image->move($destinationPath, $nomimage);
-            // // Assurez-vous d'attribuer le nom d'image avant d'appeler update()
-            // $data['image'] = $nomimage;
             $nomImage =  $request->file('image')->store('images', 'public');
             $data['image'] = $nomImage;
         }
         $note->update($data);
+        Alert::success('Note UPDATING', 'Your note has been updated successfully');
         return to_route('note.show', $note->id)->with('success', 'Your note has been updated successfully');
     }
 
@@ -108,9 +93,7 @@ class NoteController extends Controller
      */
     public function destroy(Note $note)
     {
-        if ($note->user_id !== Auth()->user()->id) {
-            abort(403);
-        }
+        Gate::authorize('canEdit', $note);
         $note->delete();
         // $note->forceDelete(); // use forceDelete to delete the note from the database too 
         return redirect()->route('note.index')->with('success', 'your note has been deleted successfully');
@@ -121,7 +104,7 @@ class NoteController extends Controller
     {
         $note = Note::onlyTrashed()
             ->find($id);
-        if ($note->user_id !== Auth()->user()->id) {
+        if ($note->user_id !== Auth::id()) {
             abort(403);
         }
         $note->forceDelete();
@@ -129,26 +112,25 @@ class NoteController extends Controller
         return redirect()->route('note.index')->with('success', 'your note has been deleted Prementely successfully');
     }
 
-    public function deleteAll(){
-        $user_id = Auth()->user()->id;
+    public function deleteAll()
+    {
+        $user_id = Auth::id();
         $notes = Note::onlyTrashed()->where('user_id', $user_id)->get();
-        if($notes->count() > 0) {
-           foreach($notes as $note) {
-            $note->forceDelete();
-           }
+        if ($notes->count() > 0) {
+            foreach ($notes as $note) {
+                $note->forceDelete();
+            }
             return redirect()->route('note.index')->with('success', 'all your trashed notes has been deleted Prementely successfully');
-        }
-        else {
+        } else {
             return redirect()->route('note.index')->with('success', 'an error occurred while deleting your notes');
         }
-
     }
 
 
     public function deleted()
     {
         $notes = Note::onlyTrashed()
-            ->where('user_id', auth()->user()->id)
+            ->where('user_id', Auth::id())
             ->orderBy('id', 'desc')
             ->paginate(9);
         return view("notes.deleted", compact('notes'));
@@ -157,7 +139,7 @@ class NoteController extends Controller
     {
         $note  = Note::onlyTrashed()->where('id', $id)->firstOrFail();
         $note->restore();
-
+        Alert::success('Note RESTORING', 'Your note has been restored successfully');
         return to_route("note.show", compact('note'))->with('success', 'your note has been restored successfully');
     }
 }

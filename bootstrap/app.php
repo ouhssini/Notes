@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\isVerified;
 use App\Http\Middleware\Unverified;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;

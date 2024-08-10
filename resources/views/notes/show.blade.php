@@ -1,6 +1,6 @@
 @extends('components.layout')
 @section('title')
-    Note Number {{ $note->id }}
+    {{ $note->title }}
 @endsection
 
 
@@ -11,24 +11,32 @@
         </x-alert>
     @endif
     @if ($note)
-        <div class="alert alert-light row" role="alert">
-            <div class="col">
-                {{ $note->note }}
+        <div class="container">
+            <div class="title display-5 text-primary">{{ $note->title }}</div>
+            <div class="row justify-content-between">
+                <div class="col-md-6">
+                    <div class="  my-4">
+                        <p class="lh-lg text-wrap">{{ $note->note }}</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <img src="{{ asset('storage/' . $note->image) }}" style="max-width: 70% " alt="{{ $note->title }}">
+                </div>
             </div>
-            <div class="col">
-                <img src="{{ asset('storage/' . $note->image) }}" class="" alt="{{ Str::limit($note->note, 50) }}">
+            <div class="row">
+                {{-- <form class="col-1" action="{{ route('note.destroy', $note->id) }}">
+                    @csrf
+                    @method('delete')
+                    <button type="submit" class="btn btn-danger" data-confirm-delete="true"> Delete</button>
+                </form> --}}
+                <div class="col-1"> <a href="{{ route('note.destroy', $note->id) }}" class="btn btn-danger"
+                        data-confirm-delete="true">Delete</a>
+                </div>
+                <form class="col text-start" action="{{ route('note.edit', $note) }}" method="get">
+                    @csrf
+                    <button type="submit" class="btn btn-success"> Modifier</button>
+                </form>
             </div>
-        </div>
-        <div class="row">
-            <form class="col-1" action="{{ route('note.destroy', $note) }}" method="post">
-                @csrf
-                @method('delete')
-                <button type="submit" class="btn btn-danger"> Delete</button>
-            </form>
-            <form class="col" action="{{ route('note.edit', $note) }}" method="get">
-                @csrf
-                <button type="submit" class="btn btn-success"> Modifier</button>
-            </form>
         </div>
     @endif
 @endsection

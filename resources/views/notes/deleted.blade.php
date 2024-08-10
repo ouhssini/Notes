@@ -24,7 +24,7 @@
                         <img src="{{ asset('storage/' . $note->image) }}" class="card-img-top"
                             alt="{{ Str::limit($note->note, 50) }}">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $note->id }}</h5>
+                            <h5 class="card-title text-primary lh-lg">{{ $note->title }}</h5>
                             <p class="card-text">{{ Str::limit($note->note, 100) }}</p>
                         </div>
                         <div class="card-footer row mx-0 px-0 gap-3" style="z-index:9 ">

@@ -24,7 +24,7 @@ class UserController extends Controller
                 'password' => 'required',
             ]
         );
-        if (Auth::attempt($credintials)) {
+        if (Auth::attempt($credintials,$request->boolean('remember_me'))) {
             $request->session()->regenerate();
             return to_route('note.index');
         } else {

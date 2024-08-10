@@ -24,8 +24,9 @@ class NoteRequest extends FormRequest
         return [
 
             'note' => ['required', 'string', ' min:30', 'max:2500 '],
-            // 'user_id' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'title' => ['required', 'string', 'min:10','max:250'],
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+
         ];
     }
 }

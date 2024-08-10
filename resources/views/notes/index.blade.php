@@ -17,9 +17,9 @@
             <div class="row gap-2 justify-content-center">
                 @foreach ($notes as $note)
                     <div class="card col-md-3 ">
-                        <img src="{{ asset('storage/' . $note->image) }}" class="card-img-top" alt="{{ Str::limit($note->note, 50) }}">
+                        <img src="{{ asset('storage/' . $note->image) }}" class="card-img-top" alt="{{ $note->title }}">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $note->id }}</h5>
+                            <h5 class="card-title text-primary lh-lg">{{ $note->title }}</h5>
                             <p class="card-text">{{ Str::limit($note->note, 100) }}</p>
                             <a href="{{ route('note.show', $note) }}" class="stretched-link "></a>
                         </div>
@@ -30,11 +30,13 @@
                 {{ $notes->links() }}
             </div>
         @else
-            <h3 class="text-center text-primary mt-5 text-uppercase w-50 mx-auto lh-lg fw-bolder"> THERE IS NO NOTES TO DISPLAY CREATE NEW ONE TO SEE IT HERE
+            <h3 class="text-center text-primary mt-5 text-uppercase w-50 mx-auto lh-lg fw-bolder"> THERE IS NO NOTES TO DISPLAY
+                CREATE NEW ONE TO SEE IT HERE
             </h3>
         @endunless
     @else
-        <h3 class="text-center text-primary mt-5 text-uppercase w-50 mx-auto lh-lg fw-bolder"> THERE IS NO NOTES TO DISPLAY CREATE NEW ONE TO SEE IT HERE
+        <h3 class="text-center text-primary mt-5 text-uppercase w-50 mx-auto lh-lg fw-bolder"> THERE IS NO NOTES TO DISPLAY
+            CREATE NEW ONE TO SEE IT HERE
         </h3>
     @endif
 
